@@ -39,6 +39,12 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Column(nullable = false)
+    private String password;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -70,6 +76,10 @@ public class User {
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
