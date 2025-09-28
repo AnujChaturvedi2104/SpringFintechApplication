@@ -1,48 +1,461 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Finance Assistant</title>
+    <title>Smart Finance Assistant - Enterprise Financial Management</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 15px;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a202c;
+            background: #ffffff;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #2b6cb0;
+        }
+
+        .cta-button {
+            background: #2b6cb0;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: #2c5282;
+            transform: translateY(-1px);
+        }
+
+        .hero-section {
+            padding: 8rem 2rem 6rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            margin-top: 80px;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: #2b6cb0;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #2b6cb0;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .secondary-button:hover {
+            background: #2b6cb0;
+            color: white;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat {
+            text-align: left;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2b6cb0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-visual {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .dashboard-preview {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-indicator {
+            background: #48bb78;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .system-status {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-check {
+            width: 12px;
+            height: 12px;
+            background: #38a169;
+            border-radius: 50%;
+        }
+
+        .features-section {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 4rem;
             max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: #f7fafc;
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            padding: 6rem 2rem;
+            background: #2d3748;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 800px;
             margin: 0 auto;
         }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; }
-        p { font-size: 1.2rem; }
-        .status {
-            background: #2ecc71;
-            padding: 15px;
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-description {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button-large {
+            background: #2b6cb0;
+            color: white;
+            padding: 1rem 2rem;
             border-radius: 8px;
-            margin: 20px 0;
-            font-weight: bold;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .cta-button-large:hover {
+            background: #2c5282;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>💰 Smart Finance Assistant</h1>
-    <p>AI-Powered Personal Finance Management</p>
-    <div class="status">
-        ✅ Spring Boot is running!<br>
-        ✅ H2 Database is configured!<br>
-        ✅ Ready to build your finance app!
+<nav class="nav-bar">
+    <div class="nav-container">
+        <div class="logo">Smart Finance Assistant</div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <a href="#" class="cta-button">Login</a>
     </div>
-    <p><strong>Next:</strong> Let's start building your financial entities!</p>
-</div>
+</nav>
+
+<section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1>Smart Finance Assistant</h1>
+            <p>AI-powered personal finance management platform designed to help you take control of your financial future with intelligent insights and streamlined account management.</p>
+
+            <div class="hero-buttons">
+                <a href="#features" class="cta-button">Explore Features</a>
+                <a href="#about" class="secondary-button">Learn More</a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="dashboard-preview">
+                <div class="dashboard-header">
+                    <div class="dashboard-title">System Status</div>
+                    <div class="status-indicator">Online</div>
+                </div>
+
+                <div class="system-status">
+                    <div class="status-item">
+                        <span>Core Platform</span>
+                        <div class="status-check"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>Database Systems</span>
+                        <div class="status-check"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>API Services</span>
+                        <div class="status-check"></div>
+                    </div>
+                    <div class="status-item">
+                        <span>Analytics Engine</span>
+                        <div class="status-check"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section" id="features">
+    <div class="features-container">
+        <h2 class="section-title">Core Features</h2>
+        <p class="section-subtitle">Everything you need to manage your finances effectively in one comprehensive platform.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3 class="feature-title">User Authentication</h3>
+                <p class="feature-description">Secure login and registration system with user profile management. Create your account and access your personalized financial dashboard safely.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title">Account Management</h3>
+                <p class="feature-description">Manage multiple financial accounts in one place. Add, edit, and organize your bank accounts, credit cards, and other financial instruments.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title">Financial Management</h3>
+                <p class="feature-description">Track expenses, monitor income, and manage transactions. Categorize spending, set budgets, and maintain complete control over your financial data.</p>
+            </div>
+
+            <div class="feature-card">
+                <h3 class="feature-title">AI Insights</h3>
+                <p class="feature-description">Get intelligent insights into your spending patterns and financial habits. Receive personalized recommendations to improve your financial health.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="cta-container">
+        <h2 class="cta-title">Ready to Get Started?</h2>
+        <p class="cta-description">Experience modern financial management with Smart Finance Assistant - designed for today's financial needs.</p>
+        <a href="#" class="cta-button-large">Access Platform</a>
+    </div>
+</section>
 </body>
 </html>
