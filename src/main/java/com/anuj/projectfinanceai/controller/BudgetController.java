@@ -8,6 +8,8 @@ import com.anuj.projectfinanceai.services.BudgetService;
 import com.anuj.projectfinanceai.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +42,7 @@ public class BudgetController {
      */
     @GetMapping
     public String listBudgets(@RequestParam(required = false) String month, Model model) {
-        User user = getTestUser();
+        User user = getCurrentUser();
 
         // Parse month parameter or default to current month
         YearMonth selectedMonth;
@@ -67,7 +69,7 @@ public class BudgetController {
      */
     @GetMapping("/new")
     public String showNewBudgetForm(@RequestParam(required = false) String month, Model model) {
-        User user = getTestUser();
+        User user = getCurrentUser();
 
         // Parse month parameter or default to current month
         YearMonth selectedMonth;
@@ -109,7 +111,7 @@ public class BudgetController {
 
         // Handle validation errors
         if (result.hasErrors()) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             YearMonth month = budgetForm.getBudgetMonth() != null ? budgetForm.getBudgetMonth() : YearMonth.now();
             List<Transaction.Category> availableCategories =
                     budgetService.getAvailableCategoriesForMonth(user, month);
@@ -122,7 +124,7 @@ public class BudgetController {
 
         try {
             Budget budget = budgetForm.toBudget();
-            budget.setUser(getTestUser());
+            budget.setUser(getCurrentUser());
 
             Budget savedBudget = budgetService.createBudget(budget);
 
@@ -132,7 +134,7 @@ public class BudgetController {
             return "redirect:/budgets?month=" + savedBudget.getBudgetMonth().toString();
 
         } catch (Exception e) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             YearMonth month = budgetForm.getBudgetMonth() != null ? budgetForm.getBudgetMonth() : YearMonth.now();
             List<Transaction.Category> availableCategories =
                     budgetService.getAvailableCategoriesForMonth(user, month);
@@ -237,8 +239,15 @@ public class BudgetController {
     /**
      * Helper method to get test user (replace with actual authentication)
      */
-    private User getTestUser() {
-        return userService.findByEmail("test@example.com")
-                .orElseThrow(() -> new RuntimeException("Test user not found"));
+    /**
+     * Helper method to get currently logged-in user
+     */
+    private User getCurrentUser() {
+        // Get the email of the currently authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 }

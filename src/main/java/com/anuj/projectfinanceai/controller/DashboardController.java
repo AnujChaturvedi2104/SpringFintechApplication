@@ -8,6 +8,8 @@ import com.anuj.projectfinanceai.services.BudgetService;
 import com.anuj.projectfinanceai.services.TransactionService;
 import com.anuj.projectfinanceai.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +45,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        User user = getTestUser();
+        User user = getCurrentUser();
 
         // Get current month data
         YearMonth currentMonth = YearMonth.now();
@@ -123,9 +125,16 @@ public class DashboardController {
         return categorySpending;
     }
 
-    private User getTestUser() {
-        return userService.findByEmail("test@example.com")
-                .orElseThrow(() -> new RuntimeException("Test user not found"));
+    /**
+     * Helper method to get currently logged-in user
+     */
+    private User getCurrentUser() {
+        // Get the email of the currently authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 
     /**

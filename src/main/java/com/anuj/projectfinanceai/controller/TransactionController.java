@@ -10,6 +10,8 @@ import com.anuj.projectfinanceai.services.TransactionService;
 import com.anuj.projectfinanceai.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,7 +46,7 @@ public class TransactionController {
      */
     @GetMapping
     public String listTransactions(Model model) {
-        User user = getTestUser();
+        User user = getCurrentUser();
         List<Transaction> transactions = transactionService.findRecentTransactionsByUser(user);
 
         model.addAttribute("transactions", transactions);
@@ -58,7 +60,7 @@ public class TransactionController {
      */
     @GetMapping("/new")
     public String showNewTransactionForm(@RequestParam(required = false) Long accountId, Model model) {
-        User user = getTestUser();
+        User user = getCurrentUser();
         List<Account> accounts = accountService.findAccountsByUser(user);
 
         if (accounts.isEmpty()) {
@@ -90,7 +92,7 @@ public class TransactionController {
                                     RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             List<Account> accounts = accountService.findAccountsByUser(user);
 
             model.addAttribute("accounts", accounts);
@@ -112,7 +114,7 @@ public class TransactionController {
             return "redirect:/transactions";
 
         } catch (Exception e) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             List<Account> accounts = accountService.findAccountsByUser(user);
 
             model.addAttribute("errorMessage", "Error creating transaction: " + e.getMessage());
@@ -138,7 +140,7 @@ public class TransactionController {
             return "redirect:/transactions";
         }
 
-        User user = getTestUser();
+        User user = getCurrentUser();
         List<Account> accounts = accountService.findAccountsByUser(user);
         Transaction transaction = transactionOpt.get();
 
@@ -164,7 +166,7 @@ public class TransactionController {
                                     RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             List<Account> accounts = accountService.findAccountsByUser(user);
 
             model.addAttribute("accounts", accounts);
@@ -189,7 +191,7 @@ public class TransactionController {
             return "redirect:/transactions";
 
         } catch (Exception e) {
-            User user = getTestUser();
+            User user = getCurrentUser();
             List<Account> accounts = accountService.findAccountsByUser(user);
 
             model.addAttribute("errorMessage", "Error updating transaction: " + e.getMessage());
@@ -222,8 +224,15 @@ public class TransactionController {
     /**
      * Helper method to get test user (replace with actual authentication)
      */
-    private User getTestUser() {
-        return userService.findByEmail("test@example.com")
-                .orElseThrow(() -> new RuntimeException("Test user not found"));
+    /**
+     * Helper method to get currently logged-in user
+     */
+    private User getCurrentUser() {
+        // Get the email of the currently authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 }

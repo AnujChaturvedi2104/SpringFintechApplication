@@ -7,6 +7,8 @@ import com.anuj.projectfinanceai.services.AccountService;
 import com.anuj.projectfinanceai.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,7 +44,7 @@ public class AccountController {
     @GetMapping
     public String listAccounts(Model model) {
         // For simplicity, we'll use the test user. In a real app, you'd get this from authentication
-        User user = getTestUser();
+        User user = getCurrentUser();
 
         List<Account> accounts = accountService.findAccountsByUser(user);
         model.addAttribute("accounts", accounts);
@@ -80,7 +82,7 @@ public class AccountController {
         try {
             // Convert form to entity and save
             Account account = accountForm.toAccount();
-            account.setUser(getTestUser());
+            account.setUser(getCurrentUser());
 
             Account savedAccount = accountService.createAccount(account);
 
@@ -163,10 +165,14 @@ public class AccountController {
     }
 
     /**
-     * Helper method to get test user (replace with actual authentication)
+     * Helper method to get currently logged-in user
      */
-    private User getTestUser() {
-        return userService.findByEmail("test@example.com")
-                .orElseThrow(() -> new RuntimeException("Test user not found"));
+    private User getCurrentUser() {
+        // Get the email of the currently authenticated user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
 }
