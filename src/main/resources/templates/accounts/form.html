@@ -113,6 +113,8 @@
                         </div>
                         <div class="form-text">Enter the current balance for this account</div>
                     </div>
+                    <input type="hidden" th:if="${editing}" th:field="*{initialBalance}">
+
                     <!-- Form Actions -->
                     <div class="d-flex justify-content-between">
                         <a href="/accounts" class="btn btn-secondary">

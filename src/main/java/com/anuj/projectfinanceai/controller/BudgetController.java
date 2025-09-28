@@ -8,13 +8,13 @@ import com.anuj.projectfinanceai.services.BudgetService;
 import com.anuj.projectfinanceai.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -178,27 +178,44 @@ public class BudgetController {
                                BindingResult result,
                                Model model,
                                RedirectAttributes redirectAttributes) {
+        System.out.println("=== EDIT BUDGET DEBUG ===");
+        System.out.println("Budget ID: " + id);
+        System.out.println("Form Budget Amount: " + budgetForm.getBudgetAmount());
+        System.out.println("Has errors: " + result.hasErrors());
 
         if (result.hasErrors()) {
+            System.out.println("Errors: " + result.getAllErrors());
+
             Optional<Budget> budgetOpt = budgetService.findById(id);
             if (budgetOpt.isPresent()) {
                 model.addAttribute("budget", budgetOpt.get());
             }
             model.addAttribute("budgetId", id);
             model.addAttribute("editing", true);
+            System.out.println("No validation errors, proceeding to update...");
+
             return "budgets/form";
         }
 
         try {
-            Budget budget = budgetForm.toBudget();
-            budget.setId(id);
+            // Get the existing budget to preserve user, category, and month
+            Optional<Budget> existingBudgetOpt = budgetService.findById(id);
+            if (existingBudgetOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Budget not found");
+                return "redirect:/budgets";
+            }
 
-            Budget updatedBudget = budgetService.updateBudget(budget);
+            Budget existingBudget = existingBudgetOpt.get();
+
+            // Only update the budget amount
+            existingBudget.setBudgetAmount(budgetForm.getBudgetAmount());
+
+            Budget updatedBudget = budgetService.updateBudget(existingBudget);
 
             redirectAttributes.addFlashAttribute("successMessage",
                     "Budget for " + updatedBudget.getCategory().getDisplayName() + " updated successfully!");
 
-            return "redirect:/budgets?month=" + updatedBudget.getBudgetMonth();
+            return "redirect:/budgets?month=" + updatedBudget.getBudgetMonth().toString();
 
         } catch (Exception e) {
             Optional<Budget> budgetOpt = budgetService.findById(id);
@@ -239,15 +256,11 @@ public class BudgetController {
     /**
      * Helper method to get test user (replace with actual authentication)
      */
-    /**
-     * Helper method to get currently logged-in user
-     */
     private User getCurrentUser() {
-        // Get the email of the currently authenticated user
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String email = auth.getName();
-
         return userService.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
     }
+
 }

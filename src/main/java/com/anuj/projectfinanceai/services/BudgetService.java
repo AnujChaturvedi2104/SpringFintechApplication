@@ -1,7 +1,5 @@
 package com.anuj.projectfinanceai.services;
 
-
-
 import com.anuj.projectfinanceai.entity.Budget;
 import com.anuj.projectfinanceai.entity.Transaction;
 import com.anuj.projectfinanceai.entity.User;
@@ -106,10 +104,13 @@ public class BudgetService {
         }
 
         Budget existing = existingOpt.get();
+
+        // Only update the budget amount - preserve other fields
         existing.setBudgetAmount(budget.getBudgetAmount());
         // Note: We don't allow changing category or month for existing budgets
+        // User is already set from the existing entity
 
-        return budgetRepository.save(existing);
+        return budgetRepository.save(existing); // Save the existing entity, not the new one
     }
 
     /**

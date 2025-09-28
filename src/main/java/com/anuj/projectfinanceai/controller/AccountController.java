@@ -128,8 +128,14 @@ public class AccountController {
                                 BindingResult result,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
+        System.out.println("=== EDIT ACCOUNT DEBUG ===");
+        System.out.println("Account ID: " + id);
+        System.out.println("Form Account Amount: " + accountForm.getInitialBalance());
+        System.out.println("Has errors: " + result.hasErrors());
 
         if (result.hasErrors()) {
+            System.out.println("Errors: " + result.getAllErrors());
+
             model.addAttribute("accountTypes", Account.AccountType.values());
             model.addAttribute("accountId", id);
             model.addAttribute("editing", true);

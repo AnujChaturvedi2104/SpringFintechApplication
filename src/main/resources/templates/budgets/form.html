@@ -101,6 +101,7 @@
                         <input type="text" class="form-control"
                                th:value="${budget.category.displayName}"
                                readonly>
+                        <input type="hidden" th:field="*{category}">
                         <div class="form-text">Category cannot be changed when editing an existing budget.</div>
                     </div>
 
