@@ -94,7 +94,7 @@
                                     <td th:text="${acc.accountType.displayName}">Type</td>
                                     <td class="text-end" th:text="${#numbers.formatDecimal(acc.initialBalance, 1, 'COMMA', 2, 'POINT')}">$0.00</td>
                                     <td class="text-end"
-                                        th:class="${acc.currentBalance >= 0} ? 'balance-positive' : 'balance-negative'"
+                                        th:classappend="${acc.currentBalance >= 0} ? 'balance-positive' : 'balance-negative'"
                                         th:text="${#numbers.formatDecimal(acc.currentBalance, 1, 'COMMA', 2, 'POINT')}">$0.00
                                     </td>
                                     <td class="account-date" th:text="${#temporals.format(acc.createdAt, 'MMM dd, yyyy')}">01 Jan 2025</td>
