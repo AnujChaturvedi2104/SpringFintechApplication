@@ -16,6 +16,11 @@ import java.util.List;
  * - BigDecimal for monetary values
  * - Many-to-One relationships
  * - Calculated fields
+ * No blank account names.
+ *
+ * Account type always set.
+ * Initial balance strictly positive.
+ * Every account belongs to a user (user_id is required).
  */
 @Entity
 @Table(name = "accounts")
@@ -28,7 +33,7 @@ public class Account {
     @NotBlank(message = "Account name is required")
     @Column(name = "account_name", nullable = false)
     private String accountName;
-
+    // usually enums have ordinal, this annotation below ensures we store string version otherwise we will have numeric entries.
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Account type is required")
     @Column(name = "account_type", nullable = false)

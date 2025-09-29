@@ -17,6 +17,8 @@ import java.time.YearMonth;
 @Table(name = "budgets", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "category", "budget_month"})
 })
+// A user can only have one budget per category per month. @UniqueContstraint
+// kind of like composite unique key.
 public class Budget {
 
     @Id
