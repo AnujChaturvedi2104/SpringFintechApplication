@@ -194,3 +194,23 @@ public class FinancialInsightsService {
         return Math.max(0, Math.min(100, score));
     }
 }
+
+/**
+ * Calculates a financial health score for a user based on multiple factors.
+ *
+ * The score is computed as follows:
+ * 1. Starts with a base score of 50.
+ * 2. Savings Rate (up to 25 points):
+ *    - Calculates the user's monthly savings rate: (income - expenses) / income
+ *    - Adds points proportionally to savings rate, capped at 25 points.
+ *   3. Account Diversity (up to 15 points):
+ *    - Checks if the user has checking and savings accounts.
+ *    - Adds 5 points for a checking account, 10 points for a savings account.
+ * 4. Positive Net Worth (up to 10 points):
+ *    - If user's net worth > 0, adds 10 points.
+ *
+ * ------> Returns a final score between 0 and 100.
+ *
+ * */
+
+
